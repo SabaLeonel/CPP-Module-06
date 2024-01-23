@@ -11,29 +11,18 @@
 class ScalarConverter
 {
     public:
-        ScalarConverter(std::string const &str);
-        ScalarConverter(ScalarConverter const &other);
-        ~ScalarConverter(void);
-        ScalarConverter	&operator=(ScalarConverter const &other);
-        void	convert(void);
-        void	convertChar(void);
-        void	convertInt(void);
-        void	convertFloat(void);
-        void	convertDouble(void);
-
-        std::string const	_str;
-        char				_char;
-        int					_int;
-        float				_float;
-        double				_double;
-        bool				_isChar;
-        bool				_isInt;
-        bool				_isFloat;
-        bool				_isDouble;
-
-
+        static void convert(std::string const &str);
     private:
         ScalarConverter(void);
+        static void toChar(char litteral);
+        static void toInt(int litteral);
+        static void toFloat(float litteral);
+        static void toDouble(double litteral);
+
+        static bool isChar(std::string litteral);
+        static bool isInt(std::string litteral);
+        static bool isFloat(std::string litteral);
+        static bool isDouble(std::string litteral);
 };
 
 #endif

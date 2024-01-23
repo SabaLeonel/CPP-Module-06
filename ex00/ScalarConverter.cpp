@@ -1,184 +1,132 @@
 #include "ScalarConverter.hpp"
 
-ScalarConverter::ScalarConverter(std::string const &str) : _str(str), _char(0), _int(0), _float(0), _double(0), _isChar(false), _isInt(false), _isFloat(false), _isDouble(false)
+ScalarConverter::ScalarConverter(void) 
 {
-    return;
+    std::cout << "Default constructor called" << std::endl;
 }
 
-ScalarConverter::ScalarConverter(ScalarConverter const &other) : _str(other._str), _char(other._char), _int(other._int), _float(other._float), _double(other._double), _isChar(other._isChar), _isInt(other._isInt), _isFloat(other._isFloat), _isDouble(other._isDouble)
+
+void ScalarConverter::toChar(char litteral)
 {
-    return;
+    std::cout << "char: " << litteral << std::endl;
+    std::cout << "int: " << static_cast<int>(litteral[0]) << std::endl;
+    std::cout << "float: " << static_cast<float>(litteral[0]) << ".0f" << std::endl;
+    std::cout << "double: " << static_cast<double>(litteral[0]) << ".0" << std::endl;
 }
 
-ScalarConverter::~ScalarConverter(void)
+void ScalarConverter::toInt(int litteral)
 {
-    return;
+    try 
+    {
+        if (litteral < std::numeric_limits<char>::min() || litteral > std::numeric_limits<char>::max())
+            throw std::exception();
+        
+        std::cout << "char: " << static_cast<char>(i) << std::endl;
+        std::cout << "int: " << i << std::endl;
+        std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
+        std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
+    }catch (std::exception &e) {
+        std::cout << "impossible" << std::endl;
+    }
 }
 
-ScalarConverter &ScalarConverter::operator=(ScalarConverter const &other)
+void ScalarConverter::toFloat(float litteral)
 {
-    this->_char = other._char;
-    this->_int = other._int;
-    this->_float = other._float;
-    this->_double = other._double;
-    this->_isChar = other._isChar;
-    this->_isInt = other._isInt;
-    this->_isFloat = other._isFloat;
-    this->_isDouble = other._isDouble;
-    this->_str = other._str;
-    return (*this);
+    try
+    {
+
+        if (litteral < std::numeric_limits<char>::min() || litteral > std::numeric_limits<char>::max())
+            throw std::exception();
+        std::cout << "char: " << static_cast<char>(i) << std::endl;
+        std::cout << "int: " << i << std::endl;
+        std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
+        std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
 }
 
-void ScalarConverter::convert(void)
+void ScalarConverter::toDouble(double litteral)
 {
-    this->convertChar();
-    this->convertInt();
-    this->convertFloat();
-    this->convertDouble();
-    return;
+    try
+    {
+        if (litteral < std::numeric_limits<char>::min() || litteral > std::numeric_limits<char>::max())
+            throw std::exception();
+        std::cout << "char: " << static_cast<char>(i) << std::endl;
+        std::cout << "int: " << i << std::endl;
+        std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
+        std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
 }
 
-void ScalarConverter::convertChar(void)
+
+bool ScalarConverter::isChar(std::string litteral)
 {
-    if (this->_str.length() == 1 && !std::isdigit(this->_str[0]))
-    {
-        this->_char = this->_str[0];
-        this->_isChar = true;
-    }
-    else if (this->_str.length() == 3 && this->_str[0] == '\'' && this->_str[2] == '\'' && !std::isdigit(this->_str[1]))
-    {
-        this->_char = this->_str[1];
-        this->_isChar = true;
-    }
-    return;
+    if (litteral.empty()) 
+		return false;
+	if (litteral.length() == 1 && std::isprint(litteral[0]) && !std::isdigit(litteral[0]))
+		return true;
+	if (litteral.length() == 3 && litteral[0] == '\'' && litteral[2] == '\'')
+	{
+		if (std::isprint(litteral[1]) && !std::isdigit(litteral[1]))
+			return true;
+	}
+	return false;
 }
 
-void ScalarConverter::convertInt(void)
+bool ScalarConverter::isInt(std::string litteral)
 {
-    if (this->_str.length() == 1 && std::isdigit(this->_str[0]))
+    if (litteral.empty()) 
+        return false;
+    if (litteral.length() == 1 && std::isdigit(litteral[0]))
+        return true;
+    if (litteral.length() > 1 && (litteral[0] == '+' || litteral[0] == '-'))
     {
-        this->_int = static_cast<int>(this->_str[0] - '0');
-        this->_isInt = true;
+        if (std::isdigit(litteral[1]))
+            return true;
     }
-    else if (this->_str.length() > 1 && std::isdigit(this->_str[0]))
-    {
-        try
-        {
-            this->_int = std::stoi(this->_str);
-            this->_isInt = true;
-        }
-        catch (std::exception const &e)
-        {
-            std::cerr << "int: impossible" << std::endl;
-        }
-    }
-    return;
+    return false;
 }
 
-void ScalarConverter::convertFloat(void)
+bool ScalarConverter::isDouble(std::string litteral)
 {
-    if (this->_str.length() == 1 && std::isdigit(this->_str[0]))
+    if (str.empty()) 
+        return false;
+    if (str.length() == 1 && std::isdigit(litteral[0]))
+        return true;
+    if (str.length() > 1 && (str[0] == '+' || str[0] == '-'))
     {
-        this->_float = static_cast<float>(this->_str[0] - '0');
-        this->_isFloat = true;
+        if (std::isdigit(str[1]))
+            return true;
     }
-    else if (this->_str.length() > 1 && std::isdigit(this->_str[0]))
-    {
-        try
-        {
-            this->_float = std::stof(this->_str);
-            this->_isFloat = true;
-        }
-        catch (std::exception const &e)
-        {
-            std::cerr << "float: impossible" << std::endl;
-        }
-    }
-    return;
+    if (str.length() > 2 && str[0] == '.' && std::isdigit(str[1]))
+        return true;
+    if (str.length() > 2 && (str[0] == '+' || str[0] == '-') && str[1] == '.' && std::isdigit(str[2]))
+        return true;
+    return false;
 }
 
-void ScalarConverter::convertDouble(void)
+
+
+
+void ScalarConverter::convert(std::string const &str)
 {
-    if (this->_str.length() == 1 && std::isdigit(this->_str[0]))
-    {
-        this->_double = static_cast<double>(this->_str[0] - '0');
-        this->_isDouble = true;
-    }
-    else if (this->_str.length() > 1 && std::isdigit(this->_str[0]))
-    {
-        try
-        {
-            this->_double = std::stod(this->_str);
-            this->_isDouble = true;
-        }
-        catch (std::exception const &e)
-        {
-            std::cerr << "double: impossible" << std::endl;
-        }
-    }
-    return;
+    if (str.length() == 1 && !std::isprint(str[0]))
+        toChar(str);
+    else if (isInt(str))
+        toInt(str);
+    else if (isFloat(str))
+        toFloat(str);
+    else if (isDouble(str))
+        toDouble(str);
+    else
+        std::cout << "It's impossible to convert" << std::endl;
 }
 
-std::ostream &operator<<(std::ostream &os, ScalarConverter const &other)
-{
-    if (other._isChar)
-    {
-        os << "char: '" << other._char << "'" << std::endl;
-        os << "int: " << static_cast<int>(other._char) << std::endl;
-        os << "float: " << static_cast<float>(other._char) << ".0f" << std::endl;
-        os << "double: " << static_cast<double>(other._char) << ".0" << std::endl;
-    }
-    else if (other._isInt)
-    {
-        os << "char: ";
-        if (other._int >= 0 && other._int <= 127)
-            os << "'" << static_cast<char>(other._int) << "'" << std::endl;
-        else
-            os << "Non displayable" << std::endl;
-        os << "int: " << other._int << std::endl;
-        os << "float: " << static_cast<float>(other._int) << ".0f" << std::endl;
-        os << "double: " << static_cast<double>(other._int) << ".0" << std::endl;
-    }
-    else if (other._isFloat)
-    {
-        os << "char: ";
-        if (other._float >= 0 && other._float <= 127)
-            os << "'" << static_cast<char>(other._float) << "'" << std::endl;
-        else
-            os << "Non displayable" << std::endl;
-        os << "int: ";
-        if (other._float >= std::numeric_limits<int>::min() && other._float <= std::numeric_limits<int>::max())
-            os << static_cast<int>(other._float) << std::endl;
-        else
-            os << "impossible" << std::endl;
-        os << "float: " << other._float << "f" << std::endl;
-        os << "double: " << static_cast<double>(other._float) << std::endl;
-    }
-    else if (other._isDouble)
-    {
-        os << "char: ";
-        if (other._double >= 0 && other._double <= 127)
-            os << "'" << static_cast<char>(other._double) << "'" << std::endl;
-        else
-            os << "Non displayable" << std::endl;
-        os << "int: ";
-
-        if (other._double >= std::numeric_limits<int>::min() && other._double <= std::numeric_limits<int>::max())
-            os << static_cast<int>(other._double) << std::endl;
-        else
-            os << "impossible" << std::endl;
-
-        os << "float: ";
-
-        if (other._double >= std::numeric_limits<float>::min() && other._double <= std::numeric_limits<float>::max())
-            os << static_cast<float>(other._double) << "f" << std::endl;
-        else
-            os << "impossible" << std::endl;
-
-        os << "double: " << other._double << std::endl;
-
-    }
-
-    return (os);
-
-}
