@@ -6,7 +6,7 @@ ScalarConverter::ScalarConverter(void)
 }
 
 
-void ScalarConverter::toChar(char litteral)
+void ScalarConverter::toChar(std::string litteral)
 {
     std::cout << "char: " << litteral << std::endl;
     std::cout << "int: " << static_cast<int>(litteral[0]) << std::endl;
@@ -14,42 +14,33 @@ void ScalarConverter::toChar(char litteral)
     std::cout << "double: " << static_cast<double>(litteral[0]) << ".0" << std::endl;
 }
 
-void ScalarConverter::toInt(int litteral)
+void ScalarConverter::toInt(std::string litteral)
 {
-    try 
+    int i = std::stoi(litteral);
+    char c = static_cast<char>(i);
+    float f = static_cast<float>(i);
+    double d = static_cast<double>(i);
+
+    if (litteral == "nan" || litteral == "-inf" || litteral == "+inf" || litteral == "nanf" || litteral == "-inff" || litteral == "+inff")
+        std::cout << "char: impossible" << std::endl;
+    else if (i < std::numeric_limits<char>::min() || i > std::numeric_limits<char>::max())
     {
-        if (litteral < std::numeric_limits<char>::min() || litteral > std::numeric_limits<char>::max())
-            throw std::exception();
-        
-        std::cout << "char: " << static_cast<char>(i) << std::endl;
-        std::cout << "int: " << i << std::endl;
-        std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
-        std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
-    }catch (std::exception &e) {
-        std::cout << "impossible" << std::endl;
+        std::cout << "char: impossible" << std::endl;
+        std::cout << "int: impossible" << std::endl;
     }
+    else if (c < 32 || c > 126)
+        std::cout << "char: Non displayable" << std::endl;
+    else
+        std::cout << "char: " << c << std::endl;    
 }
 
-void ScalarConverter::toFloat(float litteral)
+void ScalarConverter::toFloat(std::string litteral)
 {
-    try
-    {
 
-        if (litteral < std::numeric_limits<char>::min() || litteral > std::numeric_limits<char>::max())
-            throw std::exception();
-        std::cout << "char: " << static_cast<char>(i) << std::endl;
-        std::cout << "int: " << i << std::endl;
-        std::cout << "float: " << static_cast<float>(i) << ".0f" << std::endl;
-        std::cout << "double: " << static_cast<double>(i) << ".0" << std::endl;
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
     
 }
 
-void ScalarConverter::toDouble(double litteral)
+void ScalarConverter::toDouble(std::string litteral)
 {
     try
     {
@@ -67,66 +58,62 @@ void ScalarConverter::toDouble(double litteral)
 }
 
 
-bool ScalarConverter::isChar(std::string litteral)
+enum Type{
+    Char,
+    Int,
+    Float,
+    Double,
+    Invalid
+};
+
+static Type checkType(std::string const &litteral)
 {
-    if (litteral.empty()) 
-		return false;
-	if (litteral.length() == 1 && std::isprint(litteral[0]) && !std::isdigit(litteral[0]))
-		return true;
-	if (litteral.length() == 3 && litteral[0] == '\'' && litteral[2] == '\'')
-	{
-		if (std::isprint(litteral[1]) && !std::isdigit(litteral[1]))
-			return true;
-	}
-	return false;
+    if (litteral.length() == 3 && litteral[0] == '\'' && litteral[2] == '\'')
+        return Char;
+    if (std::regex_match(litteral, std::regex("[-+]?[0-9]+")))
+        return Int;
+    if (std::regex_match(litteral, std::regex("[-+]?[0-9]+.[0-9]+")) || litteral == "nanf" || litteral == "+inff" || litteral == "-inff")
+        return Double;
+    if (std::regex_match(litteral, std::regex("[-+]?[0-9]+.[0-9]+f")) || litteral == "nan" || litteral == "+inf" || litteral == "-inf")
+        return Float;
+    return Invalid;
 }
 
-bool ScalarConverter::isInt(std::string litteral)
+
+void ScalarConverter::convert(std::string const &litteral)
 {
-    if (litteral.empty()) 
-        return false;
-    if (litteral.length() == 1 && std::isdigit(litteral[0]))
-        return true;
-    if (litteral.length() > 1 && (litteral[0] == '+' || litteral[0] == '-'))
+    switch (checkType(litteral))
     {
-        if (std::isdigit(litteral[1]))
-            return true;
+        case Char:
+            toChar(litteral);
+            break;
+        case Int:
+            toInt(litteral);
+            break;
+        case Float:
+            toFloat(litteral);
+            break;
+        case Double:
+            toDouble(litteral);
+            break;
+        default:
+            std::cout << "Error: Invalid type" << std::endl;
+            break;
     }
-    return false;
-}
-
-bool ScalarConverter::isDouble(std::string litteral)
-{
-    if (str.empty()) 
-        return false;
-    if (str.length() == 1 && std::isdigit(litteral[0]))
-        return true;
-    if (str.length() > 1 && (str[0] == '+' || str[0] == '-'))
-    {
-        if (std::isdigit(str[1]))
-            return true;
-    }
-    if (str.length() > 2 && str[0] == '.' && std::isdigit(str[1]))
-        return true;
-    if (str.length() > 2 && (str[0] == '+' || str[0] == '-') && str[1] == '.' && std::isdigit(str[2]))
-        return true;
-    return false;
 }
 
 
-
-
-void ScalarConverter::convert(std::string const &str)
-{
-    if (str.length() == 1 && !std::isprint(str[0]))
-        toChar(str);
-    else if (isInt(str))
-        toInt(str);
-    else if (isFloat(str))
-        toFloat(str);
-    else if (isDouble(str))
-        toDouble(str);
-    else
-        std::cout << "It's impossible to convert" << std::endl;
-}
+// static void ScalarConverter::convert(std::string const &litteral)
+// {
+//     if (litteral.length() == 1 && !std::isprint(litteral[0]))
+//         toChar(litteral);
+//     else if (isInt(litteral))
+//         toInt(litteral);
+//     else if (isFloat(litteral))
+//         toFloat(litteral);
+//     else if (isDouble(litteral))
+//         toDouble(litteral);
+//     else
+//         std::cout << "It's impossible to convert" << std::endl;
+// }
 
