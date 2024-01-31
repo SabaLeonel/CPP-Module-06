@@ -87,6 +87,12 @@ static bool isinfcustom(float value) {
     return std::numeric_limits<float>::has_infinity && (value == std::numeric_limits<float>::infinity() || value == -std::numeric_limits<float>::infinity());
 }
 
+static bool isSpecialDouble(double value) 
+{
+        return isnancustom(value) || isinfcustom(value);
+}
+
+
 void ScalarConverter::toFloat(std::string litteral)
 {
     std::cout << "Conversion from Float" << std::endl;
@@ -136,40 +142,42 @@ void ScalarConverter::toFloat(std::string litteral)
 
 void ScalarConverter::toDouble(std::string litteral)
 {
-    try
-    {
-        double d = std::stod(litteral);
-        float f = static_cast<float>(d);
-        int i = static_cast<int>(d);
-        char c = static_cast<char>(d);
-        std::cout << "Conversion from Double"  << std::endl;
-        if (litteral == "nan" || litteral == "-inf" || litteral == "+inf")
-            std::cout << "char: impossible" << std::endl;
-        else if (c < 32 || c > 126)
-            std::cout << "char: Non displayable" << std::endl;
-        else
-            std::cout << "char: " << c << std::endl;
-        if (litteral == "nan" || litteral == "-inf" || litteral == "+inf")
-            std::cout << "int: impossible" << std::endl;
-        else
-            std::cout << "int: " << i << std::endl;
-        if (f == std::floor(f) && litteral != "nan" && litteral != "-inf" && litteral != "+inf")
-            std::cout << "float: " << f << ".0f" << std::endl;
-        else if (litteral == "-inf" || litteral == "+inf")
-            std::cout << "float: " << f << std::endl;
-        else
-            std::cout << "float: " << f << "f" << std::endl;
-        if (d == std::floor(d) && litteral != "nan" && litteral != "-inf" && litteral != "+inf")
-            std::cout << "double: " << d << ".0" << std::endl;
-        else
-            std::cout << "double: " << d << std::endl;
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    std::cout << "Conversion from Double" << std::endl;
+    std::istringstream iss(litteral);
     
+    double d;
+
+    if (!(iss >> d)) 
+    {
+        std::cout << "Conversion to double failed." << std::endl;
+        return;
+    }
+
+    int i = static_cast<int>(d);
+    char c = static_cast<char>(d);
+    float f = static_cast<float>(d);
     
+    if (litteral == "nan" || litteral == "-inf" || litteral == "+inf")
+        std::cout << "char: impossible" << std::endl; 
+    else if (c < 32 || c > 126)
+        std::cout << "char: Non displayable" << std::endl;
+    else
+        std::cout << "char: " << c << std::endl;
+    
+    if (d < std::numeric_limits<int>::min() || d > std::numeric_limits<int>::max() || isnancustom(d) || isinfcustom(d))
+        std::cout << "int: impossible" << std::endl;
+    else
+        std::cout << "int: " << i << std::endl;
+
+    if (f == static_cast<float>(static_cast<int>(f)) && !isSpecialDouble(f))
+        std::cout << "float: " << f << ".0f" << std::endl;
+    else
+        std::cout << "float: " << f << "f" << std::endl;
+
+    if (d == static_cast<double>(static_cast<int>(d)) && !isSpecialDouble(d))
+        std::cout << "double: " << d << ".0" << std::endl;
+    else
+        std::cout << "double: " << d << std::endl;
 }
 
 
