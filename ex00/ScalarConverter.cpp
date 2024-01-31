@@ -45,25 +45,25 @@ void ScalarConverter::toInt(std::string litteral)
     float f = static_cast<float>(i);
     double d = static_cast<double>(i);
     std::cout << "Conversion from Int" << std::endl;
-    // Check for non-integer literals
+
     if (litteral == "nan" || litteral == "-inf" || litteral == "+inf") {
         std::cout << "char: impossible" << std::endl;
         std::cout << "int: impossible" << std::endl;
     } else {
-    // Check for char
+
     if (i < std::numeric_limits<char>::min() || i > std::numeric_limits<char>::max())
         std::cout << "char: impossible" << std::endl;
     else if (c < 32 || c > 126)
         std::cout << "char: Non displayable" << std::endl;
     else
         std::cout << "char: " << c << std::endl;
-    // Check for int
+
     if (ll < std::numeric_limits<int>::min() || ll > std::numeric_limits<int>::max())
         std::cout << "int: impossible" << std::endl;
         else
             std::cout << "int: " << i << std::endl;
     }
-    // Floating-point conversions
+
     if (f == std::floor(f) && !std::isnan(f) && !std::isinf(f))
         std::cout << "float: " << f << ".0f" << std::endl;
     else
@@ -101,7 +101,7 @@ void ScalarConverter::toFloat(std::string litteral)
 
     std::istringstream iss(litteral);
     float f;
-    
+
     if (!(iss >> f)) 
     {
         std::cout << "Conversion to float failed." << std::endl;
@@ -216,7 +216,6 @@ void ScalarConverter::toSpecial(std::string litteral)
     std::cout << "float: nanf" << std::endl;
     std::cout << "double: nan" << std::endl;
 }
-
 
 void ScalarConverter::convert(std::string const &litteral)
 {
