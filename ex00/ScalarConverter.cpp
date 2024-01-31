@@ -96,12 +96,14 @@ static bool isSpecialDouble(double value)
 void ScalarConverter::toFloat(std::string litteral)
 {
     std::cout << "Conversion from Float" << std::endl;
-    if (!litteral.empty() && (litteral.back() == 'f' || litteral.back() == 'F')) {
+    if (!litteral.empty() && (litteral.back() == 'f' || litteral.back() == 'F')) 
         litteral.erase(litteral.size() - 1);
-    }
+
     std::istringstream iss(litteral);
     float f;
-    if (!(iss >> f)) {
+    
+    if (!(iss >> f)) 
+    {
         std::cout << "Conversion to float failed." << std::endl;
         return;
     }
@@ -110,34 +112,29 @@ void ScalarConverter::toFloat(std::string litteral)
     int i = static_cast<int>(f);
     char c = static_cast<char>(f);
   
-    // Check for special cases
-    if (litteral == "nan" || litteral == "-inf" || litteral == "+inf") {
-        std::cout << "char: impossible" << std::endl;
-        std::cout << "int: impossible" << std::endl;
-    } else {
-        // Char conversion
+    if (litteral == "nan" || litteral == "-inf" || litteral == "+inf")
+        std::cout << "char: impossible" << std::endl;   
+    else {
         if (c < 32 || c > 126)
             std::cout << "char: Non displayable" << std::endl;
         else
             std::cout << "char: " << c << std::endl;
     }
 
-    if (f < std::numeric_limits<int>::min() || f > std::numeric_limits<int>::max() || isnancustom(f) || isinfcustom(f)) {
+    if (f < std::numeric_limits<int>::min() || f > std::numeric_limits<int>::max() || isnancustom(f) || isinfcustom(f))
         std::cout << "int: impossible" << std::endl;
-    } else {
+    else
         std::cout << "int: " << i << std::endl;
-    }
-    // Float conversion
+
     if (f == static_cast<float>(static_cast<int>(f)) && !isSpecialFloat(f))
         std::cout << "float: " << f << ".0f" << std::endl;
     else
         std::cout << "float: " << f << "f" << std::endl;
-    // Double conversion
+
     if (d == static_cast<double>(static_cast<int>(d)) && !isSpecialFloat(d))
         std::cout << "double: " << d << ".0" << std::endl;
     else
         std::cout << "double: " << d << std::endl;
-
 }
 
 void ScalarConverter::toDouble(std::string litteral)
