@@ -3,13 +3,22 @@
 #include "B.hpp"
 #include "C.hpp"
 
-Base::~Base() {}
+Base::Base(void)
+{
+	std::cout << "Base instanciated" << std::endl;
+}
 
+Base::~Base(void)
+{
+	std::cout << "Base destroyed" << std::endl;
+}
 
 
 Base *Base::generate(void)
 {
+    srand(time(NULL));
     int i = rand() % 3;
+
     if (i == 0)
         return (new A);
     else if (i == 1)

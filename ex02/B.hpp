@@ -12,8 +12,8 @@ class B : public Base
     private:
 
     public:
-        virtual ~B() {};
-        B() {};
+        virtual ~B(void);
+        B(void);
 };
 
 #endif
